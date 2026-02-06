@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Valentine?</title>
 
-  <!-- Better fonts -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Inter:wght@500;700&display=swap" rel="stylesheet">
@@ -29,19 +29,25 @@
 
     .card{
       width:min(760px, 92vw);
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.075);
       border: 1px solid rgba(255,255,255,0.14);
       backdrop-filter: blur(10px);
       border-radius: 22px;
-      padding: 26px 22px;
+      padding: 24px 22px;
       text-align:center;
-      box-shadow: 0 20px 70px rgba(0,0,0,0.35);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+      position:relative;
+      animation: breathe 3.2s ease-in-out infinite;
+    }
+    @keyframes breathe{
+      0%,100% { box-shadow: 0 18px 60px rgba(0,0,0,0.35); transform: translateY(0); }
+      50%     { box-shadow: 0 22px 70px rgba(0,0,0,0.40); transform: translateY(-1px); }
     }
 
     h1{
-      margin:0 0 14px;
+      margin:0 0 12px;
       font-family: Fraunces, serif;
-      font-size: clamp(24px, 3.6vw, 42px);
+      font-size: clamp(20px, 3.2vw, 36px); /* smaller */
       letter-spacing: 0.2px;
     }
 
@@ -50,29 +56,47 @@
       width:100%;
       height: 320px;
       border-radius: 18px;
-      background: rgba(0,0,0,0.22);
-      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.20);
+      border: 1px solid rgba(255,255,255,0.12);
       overflow:hidden;
+      isolation:isolate; /* keeps z-index predictable */
+    }
+
+    /* floating hearts (background) */
+    .bg-heart{
+      position:absolute;
+      left: var(--x);
+      top: 110%;
+      font-size: var(--s);
+      opacity: 0.22;
+      pointer-events:none;
+      animation: drift var(--d) linear infinite;
+      z-index: 0;
+      filter: blur(0.2px);
+    }
+    @keyframes drift{
+      0%   { transform: translate(-50%, 0) rotate(0deg); }
+      100% { transform: translate(-50%, -520px) rotate(260deg); }
     }
 
     .btn{
       border:none;
-      padding: 14px 20px;
+      padding: 12px 18px;         /* slightly smaller */
       border-radius: 14px;
-      font-size: 16px;
+      font-size: 15px;            /* slightly smaller */
       font-weight: 700;
       cursor:pointer;
       user-select:none;
       box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-      transition: transform .12s ease, filter .12s ease;
+      transition: transform .14s ease, filter .14s ease;
       white-space: nowrap;
       position:absolute;
       top: 62%;
       transform: translate(-50%,-50%);
-      z-index: 2; /* above normal stage */
+      z-index: 2;
     }
-    .btn:hover{ filter: brightness(1.06); }
-    .btn:active{ transform: translate(-50%,-50%) translateY(1px) scale(0.99); }
+    .btn:hover{ transform: translate(-50%,-50%) scale(1.05); }
+    .btn:active{ transform: translate(-50%,-50%) scale(0.98); }
 
     .yes{
       left: 35%;
@@ -85,12 +109,13 @@
       color:#200616;
     }
 
-    /* Overlay: MUST NOT block clicks until shown */
+    /* Overlay */
     .accepted{
       display:none;
-      pointer-events:none;     /* critical */
+      pointer-events:none;
       position:absolute;
       inset:0;
+      display:grid;
       place-items:center;
       text-align:center;
       background: rgba(10,10,18,0.55);
@@ -99,26 +124,34 @@
     .accepted.show{
       display:grid;
       pointer-events:auto;
-      animation: pop .18s ease-out;
+      animation: reveal .22s ease-out;
     }
-    @keyframes pop{ from{ transform: scale(0.985); opacity:0 } to{ transform: scale(1); opacity:1 } }
-
+    @keyframes reveal{
+      from{ transform: scale(0.985); opacity:0; }
+      to  { transform: scale(1); opacity:1; }
+    }
     .big{
       font-family: Fraunces, serif;
-      font-size: clamp(30px, 4.2vw, 56px);
-      margin: 0 0 8px;
+      font-size: clamp(26px, 4vw, 48px);
+      margin: 0 0 6px;
       line-height: 1.05;
+      animation: bounce .35s ease-out both;
+    }
+    @keyframes bounce{
+      0%{ transform: translateY(6px); }
+      60%{ transform: translateY(-4px); }
+      100%{ transform: translateY(0); }
     }
     .small{
       margin:0;
-      font-size: 16px;
+      font-size: 15px;
       opacity:0.92;
     }
 
     /* Confetti */
     .confetti{
       position:absolute;
-      width:10px; height:14px;
+      width:9px; height:12px;
       border-radius: 3px;
       top: -20px;
       animation: fall linear forwards;
@@ -134,14 +167,19 @@
       position:absolute;
       pointer-events:none;
       z-index: 7;
-      font-size: 26px;
+      font-size: 24px;
       animation: floatUp 1.1s ease-out forwards;
       filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
     }
     @keyframes floatUp{
       0%   { transform: translate(-50%,-50%) scale(0.75); opacity:0; }
       15%  { opacity:1; }
-      100% { transform: translate(-50%,-170%) scale(1.25); opacity:0; }
+      100% { transform: translate(-50%,-170%) scale(1.2); opacity:0; }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .card, .bg-heart, .big, .confetti, .floaty{ animation: none !important; }
     }
   </style>
 </head>
@@ -151,6 +189,13 @@
     <h1 id="title">Will you be my Valentine? 💘</h1>
 
     <div class="stage" id="stage">
+      <!-- background hearts -->
+      <div class="bg-heart" style="--x:12%; --s:16px; --d:10s;">💗</div>
+      <div class="bg-heart" style="--x:30%; --s:14px; --d:12s;">💖</div>
+      <div class="bg-heart" style="--x:55%; --s:18px; --d:11s;">💘</div>
+      <div class="bg-heart" style="--x:72%; --s:14px; --d:13s;">💓</div>
+      <div class="bg-heart" style="--x:88%; --s:16px; --d:9s;">💕</div>
+
       <button class="btn yes" id="yesBtn" type="button">Yes</button>
       <button class="btn no" id="noBtn" type="button">No</button>
 
@@ -214,16 +259,11 @@
 
     function init(){
       const s = stage.getBoundingClientRect();
-      // Keep No on the right-ish area initially
       setNoPos(s.width * 0.62, s.height * 0.58);
-      // Ensure Yes stays centered left-ish even after resize
-      yesBtn.style.left = "35%";
-      yesBtn.style.top  = "62%";
     }
     init();
     window.addEventListener('resize', init);
 
-    // Dodge logic
     stage.addEventListener('mousemove', (e) => {
       const s = stage.getBoundingClientRect();
       const mx = e.clientX - s.left;
@@ -269,14 +309,13 @@
         el.className = 'floaty';
         el.textContent = emoji;
 
-        // Spawn around center
         const x = 0.30*s.width + Math.random()*0.40*s.width;
         const y = 0.40*s.height + Math.random()*0.25*s.height;
 
         el.style.left = x + "px";
         el.style.top  = y + "px";
         el.style.animationDelay = (Math.random()*220) + "ms";
-        el.style.fontSize = (22 + Math.random()*14) + "px";
+        el.style.fontSize = (20 + Math.random()*12) + "px";
 
         stage.appendChild(el);
         el.addEventListener('animationend', () => el.remove());
@@ -284,18 +323,14 @@
     }
 
     yesBtn.addEventListener('click', () => {
-      // Hide buttons
       yesBtn.style.display = 'none';
       noBtn.style.display = 'none';
-
-      // Show overlay
       accepted.classList.add('show');
 
-      // Effects: flowers + kisses + confetti
-      confettiBurst(100);
-      floatEmojis("💐", 10);
-      floatEmojis("🌸", 10);
-      floatEmojis("💋", 12);
+      confettiBurst(95);
+      floatEmojis("💐", 9);
+      floatEmojis("🌸", 9);
+      floatEmojis("💋", 11);
     });
   </script>
 </body>
