@@ -2,54 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Valentine?</title>
 
   <!-- Cute + clean fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Nunito:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg1:#0f1020; --bg2:#25143a;
-      --text:#f7f7ff;
-      --card: rgba(255,255,255,.08);
-      --stroke: rgba(255,255,255,.14);
-      --yes1:#7fffd4; --yes2:#86b9ff;
-      --no1:#ff7a7a;  --no2:#ff4da6;
+      --bg1:#101426; --bg2:#24143a;
+      --card: rgba(255,255,255,0.10);
+      --stroke: rgba(255,255,255,0.16);
+      --text:#f6f7ff;
+      --yes1:#7CFFCB; --yes2:#7AA7FF;
+      --no1:#FF7A7A;  --no2:#FF63B8;
     }
 
     *{ box-sizing:border-box; }
     body{
       margin:0; min-height:100vh; display:grid; place-items:center;
       font-family: Nunito, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
+      color:var(--text);
       background:
         radial-gradient(1100px 700px at 20% 20%, #3a1a5f 0%, transparent 60%),
-        radial-gradient(900px 700px at 80% 30%, #1a5f55 0%, transparent 55%),
+        radial-gradient(900px 600px at 80% 30%, #1a5f55 0%, transparent 55%),
         linear-gradient(160deg, var(--bg1), var(--bg2));
       overflow:hidden;
     }
 
     .card{
-      width:min(720px, 92vw);
+      width:min(740px, 92vw);
       background: var(--card);
       border: 1px solid var(--stroke);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       border-radius: 20px;
-      padding: 18px 18px 20px;
+      padding: 20px 18px 18px;
       text-align:center;
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      position:relative;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
     }
 
     h1{
-      margin: 6px 0 14px;
+      margin:0 0 12px;
       font-family: Quicksand, Nunito, sans-serif;
-      font-size: clamp(18px, 2.8vw, 28px); /* smaller */
-      letter-spacing: .2px;
-      font-weight: 700;
+      font-size: clamp(18px, 2.6vw, 28px); /* smaller */
+      letter-spacing: 0.2px;
     }
 
     .stage{
@@ -57,164 +55,167 @@
       width:100%;
       height: 300px;
       border-radius: 16px;
-      background: rgba(0,0,0,.20);
-      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.12);
       overflow:hidden;
       isolation:isolate;
     }
 
-    /* Cute floating hearts in background */
-    .heart{
+    /* subtle floating hearts background */
+    .bg-heart{
       position:absolute;
       left: var(--x);
       top: 110%;
+      opacity: 0.22;
       font-size: var(--s);
-      opacity: .18;
       pointer-events:none;
-      animation: float var(--d) linear infinite;
+      animation: drift var(--d) linear infinite;
       z-index: 0;
     }
-    @keyframes float{
-      to{ transform: translateY(-520px) rotate(240deg); }
+    @keyframes drift{
+      0%   { transform: translate(-50%, 0) rotate(0deg); }
+      100% { transform: translate(-50%, -520px) rotate(260deg); }
     }
 
     .btn{
       border:none;
-      padding: 11px 16px;
-      border-radius: 14px;
-      font-size: 14px;          /* smaller */
+      padding: 11px 16px;         /* smaller */
+      border-radius: 12px;
+      font-size: 14px;            /* smaller */
       font-weight: 800;
       cursor:pointer;
       user-select:none;
-      white-space:nowrap;
-      box-shadow: 0 12px 28px rgba(0,0,0,.22);
-      transition: transform .14s ease, filter .14s ease;
       position:absolute;
-      top: 64%;
+      top: 62%;
       transform: translate(-50%,-50%);
       z-index: 2;
+      box-shadow: 0 12px 26px rgba(0,0,0,0.24);
+      transition: transform .14s ease, filter .14s ease;
+      white-space: nowrap;
     }
-    .btn:hover{ transform: translate(-50%,-50%) scale(1.06); }
-    .btn:active{ transform: translate(-50%,-50%) scale(.98); }
+    .btn:hover{ transform: translate(-50%,-50%) scale(1.05); filter: brightness(1.05); }
+    .btn:active{ transform: translate(-50%,-50%) scale(0.98); }
 
     .yes{
-      left: 35%;
+      left: 36%;
       background: linear-gradient(135deg, var(--yes1), var(--yes2));
-      color:#07131a;
+      color:#0b1020;
     }
     .no{
-      left: 65%;
+      left: 64%;
       background: linear-gradient(135deg, var(--no1), var(--no2));
-      color:#240716;
+      color:#250813;
     }
 
-    /* ✅ CRITICAL FIX: overlay is NOT grid by default */
+    /* THE IMPORTANT PART: overlay is truly hidden until clicked */
     .accepted{
-      display:none;            /* hidden */
-      pointer-events:none;     /* can't block clicks */
+      display:none !important;     /* hard guarantee */
+      pointer-events:none;
       position:absolute;
       inset:0;
-      background: rgba(10,10,18,.55);
-      z-index: 5;
       place-items:center;
       text-align:center;
+      background: rgba(8,10,18,0.55);
+      z-index: 5;
     }
     .accepted.show{
-      display:grid;            /* visible only after click */
+      display:grid !important;     /* only when shown */
       pointer-events:auto;
-      animation: pop .20s ease-out;
+      animation: pop .18s ease-out;
     }
-    @keyframes pop{
-      from{ transform: scale(.985); opacity:0; }
-      to{ transform: scale(1); opacity:1; }
-    }
+    @keyframes pop{ from{ transform: scale(0.985); opacity:0 } to{ transform: scale(1); opacity:1 } }
 
     .big{
       font-family: Quicksand, Nunito, sans-serif;
-      font-size: clamp(22px, 3.4vw, 36px); /* smaller */
+      font-size: clamp(22px, 3vw, 34px); /* smaller */
       margin: 0 0 6px;
-      font-weight: 700;
+      line-height: 1.1;
     }
     .small{
       margin:0;
-      font-size: 14px;
-      opacity:.92;
-      font-weight: 600;
+      font-size: 14px;            /* smaller */
+      opacity:0.92;
     }
 
-    /* Confetti */
+    /* confetti */
     .confetti{
       position:absolute;
-      width:8px; height:10px;
+      width:8px; height:11px;
       border-radius: 3px;
       top:-20px;
       animation: fall linear forwards;
       pointer-events:none;
       z-index: 6;
     }
-    @keyframes fall{
-      to{ transform: translateY(360px) rotate(720deg); opacity:1; }
-    }
+    @keyframes fall{ to { transform: translateY(380px) rotate(720deg); opacity:1; } }
 
-    /* Flowers/kisses */
+    /* kisses/flowers */
     .floaty{
       position:absolute;
       pointer-events:none;
       z-index: 7;
-      animation: floatUp 1.0s ease-out forwards;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+      animation: floatUp 1.05s ease-out forwards;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.35));
+      opacity: 0;
     }
     @keyframes floatUp{
-      0%   { transform: translate(-50%,-50%) scale(.75); opacity:0; }
-      15%  { opacity:1; }
-      100% { transform: translate(-50%,-160%) scale(1.2); opacity:0; }
+      0%   { transform: translate(-50%,-50%) scale(0.75); opacity:0; }
+      18%  { opacity:1; }
+      100% { transform: translate(-50%,-165%) scale(1.15); opacity:0; }
     }
 
+    /* reduced motion */
     @media (prefers-reduced-motion: reduce){
-      .heart, .confetti, .floaty{ animation:none !important; }
+      .bg-heart, .confetti, .floaty { animation: none !important; }
     }
   </style>
 </head>
+
 <body>
   <div class="card">
     <h1 id="title">Will you be my Valentine? 💘</h1>
 
     <div class="stage" id="stage">
       <!-- background hearts -->
-      <div class="heart" style="--x:12%;--s:14px;--d:10s;">💗</div>
-      <div class="heart" style="--x:28%;--s:12px;--d:12s;">💖</div>
-      <div class="heart" style="--x:52%;--s:16px;--d:11s;">💘</div>
-      <div class="heart" style="--x:70%;--s:12px;--d:13s;">💕</div>
-      <div class="heart" style="--x:88%;--s:14px;--d:9s;">💓</div>
+      <div class="bg-heart" style="--x:14%; --s:14px; --d:12s;">💗</div>
+      <div class="bg-heart" style="--x:32%; --s:12px; --d:14s;">💖</div>
+      <div class="bg-heart" style="--x:54%; --s:16px; --d:13s;">💘</div>
+      <div class="bg-heart" style="--x:74%; --s:12px; --d:15s;">💓</div>
+      <div class="bg-heart" style="--x:88%; --s:14px; --d:11s;">💕</div>
 
       <button class="btn yes" id="yesBtn" type="button">Yes</button>
       <button class="btn no" id="noBtn" type="button">No</button>
 
-      <div class="accepted" id="accepted">
+      <div class="accepted" id="accepted" aria-hidden="true">
         <div>
-          <div class="big">Yay 💖</div>
-          <p class="small">Come here 💋</p>
+          <div class="big" id="bigLine">Yay 💖</div>
+          <p class="small" id="smallLine">come here 💋</p>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // put her name here
+    // ===== Put her name here =====
     const HER_NAME = "HerName"; // e.g. "Ananya"
-    document.getElementById("title").textContent = `Hey ${HER_NAME}, will you be my Valentine? 💘`;
+    document.getElementById('title').textContent =
+      `Hey ${HER_NAME}, will you be my Valentine? 💘`;
 
     const stage = document.getElementById('stage');
-    const noBtn = document.getElementById('noBtn');
     const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
     const accepted = document.getElementById('accepted');
+
+    // HARD GUARD: if any weird CSS shows it, force-hide until click
+    accepted.classList.remove('show');
+    accepted.style.display = 'none';
 
     function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
     function setNoPos(x, y){
       const s = stage.getBoundingClientRect();
       const b = noBtn.getBoundingClientRect();
-      const pad = 12;
+      const pad = 10;
 
       const maxX = s.width  - b.width  - pad;
       const maxY = s.height - b.height - pad;
@@ -229,11 +230,11 @@
     function moveNoAwayFrom(ax, ay){
       const s = stage.getBoundingClientRect();
       const b = noBtn.getBoundingClientRect();
-      const pad = 12;
+      const pad = 10;
       const maxX = s.width  - b.width  - pad;
       const maxY = s.height - b.height - pad;
 
-      let x, y, tries=0;
+      let x, y, tries = 0;
       do{
         x = Math.random() * maxX;
         y = Math.random() * maxY;
@@ -241,7 +242,7 @@
         const dy = (y + b.height/2) - ay;
         var dist = Math.hypot(dx, dy);
         tries++;
-      } while(dist < 150 && tries < 30);
+      } while(dist < 140 && tries < 30);
 
       setNoPos(x, y);
     }
@@ -262,7 +263,7 @@
       const bx = (b.left - s.left);
       const by = (b.top  - s.top);
 
-      if (Math.hypot(mx - bx, my - by) < 120) moveNoAwayFrom(mx, my);
+      if (Math.hypot(mx - bx, my - by) < 115) moveNoAwayFrom(mx, my);
     });
 
     noBtn.addEventListener('touchstart', (e) => {
@@ -272,14 +273,20 @@
       moveNoAwayFrom(t.clientX - s.left, t.clientY - s.top);
     }, { passive:false });
 
-    function confettiBurst(count=80){
+    noBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const s = stage.getBoundingClientRect();
+      moveNoAwayFrom(Math.random()*s.width, Math.random()*s.height);
+    });
+
+    function confettiBurst(count=70){
       const s = stage.getBoundingClientRect();
       for(let i=0;i<count;i++){
         const c = document.createElement('div');
         c.className = 'confetti';
         c.style.left = (Math.random() * (s.width - 10)) + "px";
         c.style.background = `hsl(${Math.floor(Math.random()*360)} 90% 60%)`;
-        c.style.animationDuration = (850 + Math.random()*1100) + "ms";
+        c.style.animationDuration = (850 + Math.random()*1000) + "ms";
         stage.appendChild(c);
         c.addEventListener('animationend', () => c.remove());
       }
@@ -292,12 +299,12 @@
         el.className = 'floaty';
         el.textContent = emoji;
 
-        const x = 0.30*s.width + Math.random()*0.40*s.width;
-        const y = 0.42*s.height + Math.random()*0.22*s.height;
+        const x = 0.28*s.width + Math.random()*0.44*s.width;
+        const y = 0.42*s.height + Math.random()*0.24*s.height;
 
         el.style.left = x + "px";
         el.style.top  = y + "px";
-        el.style.fontSize = (18 + Math.random()*12) + "px";
+        el.style.fontSize = (18 + Math.random()*10) + "px";
         el.style.animationDelay = (Math.random()*220) + "ms";
 
         stage.appendChild(el);
@@ -308,12 +315,14 @@
     yesBtn.addEventListener('click', () => {
       yesBtn.style.display = 'none';
       noBtn.style.display = 'none';
+
+      accepted.style.display = '';           // allow CSS to handle display
       accepted.classList.add('show');
 
-      confettiBurst(100);
-      floatEmojis("💐", 8);
-      floatEmojis("🌸", 8);
-      floatEmojis("💋", 10);
+      confettiBurst(90);
+      floatEmojis("💐", 9);
+      floatEmojis("🌸", 9);
+      floatEmojis("💋", 12);
     });
   </script>
 </body>
