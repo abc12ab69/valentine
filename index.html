@@ -4,12 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Valentine?</title>
+
+  <!-- Cleaner, nicer font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
   <style>
     :root{ --bg1:#0f1020; --bg2:#25143a; --text:#f6f7ff; --mint:#5cf2c2; --pink:#ff4da6; }
+
     *{ box-sizing:border-box; }
     body{
       margin:0; min-height:100vh; display:grid; place-items:center;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
       background:
         radial-gradient(1200px 800px at 20% 20%, #3a1a5f 0%, transparent 60%),
@@ -17,36 +24,44 @@
         linear-gradient(160deg, var(--bg1), var(--bg2));
       overflow:hidden;
     }
+
     .card{
-      width:min(720px, 92vw);
+      width:min(760px, 92vw);
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.14);
       backdrop-filter: blur(10px);
       border-radius: 22px;
-      padding: 28px 22px;
+      padding: 26px 22px;
       text-align:center;
       box-shadow: 0 20px 70px rgba(0,0,0,0.35);
     }
-    h1{ margin:0 0 10px; font-size: clamp(24px, 4vw, 42px); }
+
+    h1{
+      margin:0 0 14px;
+      font-size: clamp(22px, 3.6vw, 40px);
+      letter-spacing: 0.2px;
+    }
+
     .stage{
       position:relative;
       width:100%;
-      height: 300px;
+      height: 320px;
       border-radius: 18px;
-      background: rgba(0,0,0,0.20);
-      border: 1px dashed rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.14);
       overflow:hidden;
     }
+
     .btn{
       border:none;
-      padding: 14px 18px;
+      padding: 14px 20px;
       border-radius: 14px;
       font-size: 16px;
-      font-weight: 750;
+      font-weight: 700;
       cursor:pointer;
       user-select:none;
       box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-      transition: filter .12s ease, transform .12s ease;
+      transition: transform .12s ease, filter .12s ease;
       white-space: nowrap;
     }
     .btn:hover{ filter: brightness(1.06); }
@@ -59,6 +74,7 @@
       left: 35%;
       top: 62%;
       transform: translate(-50%,-50%);
+      z-index: 2;
     }
     .no{
       background: linear-gradient(135deg, #ff6a6a, var(--pink));
@@ -67,21 +83,38 @@
       left: 65%;
       top: 62%;
       transform: translate(-50%,-50%);
+      z-index: 2;
     }
 
+    /* IMPORTANT FIX:
+       Must be truly hidden by default so it won't block clicks. */
     .accepted{
-      display:none;
+      display:none;              /* hidden */
       position:absolute;
       inset:0;
-      display:grid;
       place-items:center;
       text-align:center;
       background: rgba(10,10,18,0.55);
+      z-index: 5;                /* above buttons only when shown */
     }
-    .accepted.show{ display:grid; }
-    .big{ font-size: clamp(28px, 4.2vw, 52px); margin: 0 0 6px; }
-    .small{ opacity:0.9; margin:0; font-size: 16px; }
+    .accepted.show{
+      display:grid;              /* visible only after clicking Yes */
+      animation: pop .18s ease-out;
+    }
+    @keyframes pop{ from{ transform: scale(0.985); opacity:0 } to{ transform: scale(1); opacity:1 } }
 
+    .big{
+      font-size: clamp(28px, 4.2vw, 52px);
+      margin: 0 0 8px;
+      line-height: 1.05;
+    }
+    .small{
+      margin:0;
+      font-size: 16px;
+      opacity:0.9;
+    }
+
+    /* Confetti */
     .confetti{
       position:absolute;
       width:10px; height:14px;
@@ -89,9 +122,25 @@
       top: -20px;
       animation: fall linear forwards;
       pointer-events:none;
+      z-index: 6;
     }
     @keyframes fall{
-      to { transform: translateY(360px) rotate(720deg); opacity: 1; }
+      to { transform: translateY(380px) rotate(720deg); opacity: 1; }
+    }
+
+    /* Kisses */
+    .kiss{
+      position:absolute;
+      font-size: 26px;
+      pointer-events:none;
+      animation: kisspop .9s ease-out forwards;
+      z-index: 7;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
+    }
+    @keyframes kisspop{
+      0%   { transform: translate(-50%,-50%) scale(0.7); opacity:0; }
+      20%  { opacity:1; }
+      100% { transform: translate(-50%,-130%) scale(1.25); opacity:0; }
     }
   </style>
 </head>
@@ -106,15 +155,15 @@
 
       <div class="accepted" id="accepted">
         <div>
-          <div class="big" id="bigLine">Yay 💖</div>
-          <p class="small" id="smallLine">Okay, it’s a date.</p>
+          <div class="big" id="bigLine">Deal 💖</div>
+          <p class="small" id="smallLine">Come here 💋</p>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // ==== CHANGE THIS ====
+    // ====== SET HER NAME HERE ======
     const HER_NAME = "HerName"; // e.g. "Ananya"
 
     const title = document.getElementById('title');
@@ -124,17 +173,10 @@
     const noBtn = document.getElementById('noBtn');
     const yesBtn = document.getElementById('yesBtn');
     const accepted = document.getElementById('accepted');
-    const bigLine = document.getElementById('bigLine');
-    const smallLine = document.getElementById('smallLine');
-
-    const yesLines = [
-      ["Yay 💖", "Okay, it’s a date."],
-      ["Nice 😌", "I’ll pick the snacks."],
-      ["W 🎉", "You just made my day."]
-    ];
 
     function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
+    // Place/move No within stage bounds
     function setNoPos(x, y){
       const s = stage.getBoundingClientRect();
       const b = noBtn.getBoundingClientRect();
@@ -146,7 +188,7 @@
       const left = clamp(x, pad, maxX);
       const top  = clamp(y, pad, maxY);
 
-      // Because button uses translate(-50%,-50%), shift by half size
+      // because button has translate(-50%,-50%)
       noBtn.style.left = (left + b.width/2) + "px";
       noBtn.style.top  = (top  + b.height/2) + "px";
     }
@@ -155,7 +197,6 @@
       const s = stage.getBoundingClientRect();
       const b = noBtn.getBoundingClientRect();
       const pad = 12;
-
       const maxX = s.width  - b.width  - pad;
       const maxY = s.height - b.height - pad;
 
@@ -179,6 +220,7 @@
     init();
     window.addEventListener('resize', init);
 
+    // Mouse dodge
     stage.addEventListener('mousemove', (e) => {
       const s = stage.getBoundingClientRect();
       const mx = e.clientX - s.left;
@@ -191,6 +233,7 @@
       if (Math.hypot(mx - bx, my - by) < 120) moveNoAwayFrom(mx, my);
     });
 
+    // Touch dodge
     noBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
       const s = stage.getBoundingClientRect();
@@ -198,29 +241,53 @@
       moveNoAwayFrom(t.clientX - s.left, t.clientY - s.top);
     }, { passive:false });
 
-    function confettiBurst(count=90){
+    // If somehow clicked
+    noBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const s = stage.getBoundingClientRect();
+      moveNoAwayFrom(Math.random()*s.width, Math.random()*s.height);
+    });
+
+    function confettiBurst(count=80){
       const s = stage.getBoundingClientRect();
       for(let i=0;i<count;i++){
         const c = document.createElement('div');
         c.className = 'confetti';
         c.style.left = (Math.random() * (s.width - 10)) + "px";
         c.style.background = `hsl(${Math.floor(Math.random()*360)} 90% 60%)`;
-        c.style.animationDuration = (900 + Math.random()*1200) + "ms";
+        c.style.animationDuration = (900 + Math.random()*1100) + "ms";
         stage.appendChild(c);
         c.addEventListener('animationend', () => c.remove());
       }
     }
 
+    function kissesBurst(n=10){
+      const s = stage.getBoundingClientRect();
+      for(let i=0;i<n;i++){
+        const k = document.createElement('div');
+        k.className = 'kiss';
+        k.textContent = "💋";
+        const x = 0.30*s.width + Math.random()*0.40*s.width;
+        const y = 0.35*s.height + Math.random()*0.30*s.height;
+        k.style.left = x + "px";
+        k.style.top  = y + "px";
+        k.style.animationDelay = (Math.random()*220) + "ms";
+        stage.appendChild(k);
+        k.addEventListener('animationend', () => k.remove());
+      }
+    }
+
     yesBtn.addEventListener('click', () => {
+      // hide buttons
       yesBtn.style.display = 'none';
       noBtn.style.display = 'none';
 
-      const pick = yesLines[Math.floor(Math.random()*yesLines.length)];
-      bigLine.textContent = pick[0];
-      smallLine.textContent = pick[1];
-
+      // show overlay
       accepted.classList.add('show');
-      confettiBurst(120);
+
+      // effects
+      confettiBurst(110);
+      kissesBurst(14);
     });
   </script>
 </body>
