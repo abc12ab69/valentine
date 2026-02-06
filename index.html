@@ -5,18 +5,20 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Valentine?</title>
 
-  <!-- Cleaner, nicer font -->
+  <!-- Better fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Inter:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{ --bg1:#0f1020; --bg2:#25143a; --text:#f6f7ff; --mint:#5cf2c2; --pink:#ff4da6; }
-
+    :root{
+      --bg1:#0f1020; --bg2:#25143a;
+      --text:#f6f7ff; --mint:#5cf2c2; --pink:#ff4da6;
+    }
     *{ box-sizing:border-box; }
     body{
       margin:0; min-height:100vh; display:grid; place-items:center;
-      font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
       background:
         radial-gradient(1200px 800px at 20% 20%, #3a1a5f 0%, transparent 60%),
@@ -38,7 +40,8 @@
 
     h1{
       margin:0 0 14px;
-      font-size: clamp(22px, 3.6vw, 40px);
+      font-family: Fraunces, serif;
+      font-size: clamp(24px, 3.6vw, 42px);
       letter-spacing: 0.2px;
     }
 
@@ -63,55 +66,53 @@
       box-shadow: 0 12px 30px rgba(0,0,0,0.25);
       transition: transform .12s ease, filter .12s ease;
       white-space: nowrap;
+      position:absolute;
+      top: 62%;
+      transform: translate(-50%,-50%);
+      z-index: 2; /* above normal stage */
     }
     .btn:hover{ filter: brightness(1.06); }
-    .btn:active{ transform: translateY(1px) scale(0.99); }
+    .btn:active{ transform: translate(-50%,-50%) translateY(1px) scale(0.99); }
 
     .yes{
+      left: 35%;
       background: linear-gradient(135deg, var(--mint), #6aa6ff);
       color:#0b1020;
-      position:absolute;
-      left: 35%;
-      top: 62%;
-      transform: translate(-50%,-50%);
-      z-index: 2;
     }
     .no{
+      left: 65%;
       background: linear-gradient(135deg, #ff6a6a, var(--pink));
       color:#200616;
-      position:absolute;
-      left: 65%;
-      top: 62%;
-      transform: translate(-50%,-50%);
-      z-index: 2;
     }
 
-    /* IMPORTANT FIX:
-       Must be truly hidden by default so it won't block clicks. */
+    /* Overlay: MUST NOT block clicks until shown */
     .accepted{
-      display:none;              /* hidden */
+      display:none;
+      pointer-events:none;     /* critical */
       position:absolute;
       inset:0;
       place-items:center;
       text-align:center;
       background: rgba(10,10,18,0.55);
-      z-index: 5;                /* above buttons only when shown */
+      z-index: 5;
     }
     .accepted.show{
-      display:grid;              /* visible only after clicking Yes */
+      display:grid;
+      pointer-events:auto;
       animation: pop .18s ease-out;
     }
     @keyframes pop{ from{ transform: scale(0.985); opacity:0 } to{ transform: scale(1); opacity:1 } }
 
     .big{
-      font-size: clamp(28px, 4.2vw, 52px);
+      font-family: Fraunces, serif;
+      font-size: clamp(30px, 4.2vw, 56px);
       margin: 0 0 8px;
       line-height: 1.05;
     }
     .small{
       margin:0;
       font-size: 16px;
-      opacity:0.9;
+      opacity:0.92;
     }
 
     /* Confetti */
@@ -128,19 +129,19 @@
       to { transform: translateY(380px) rotate(720deg); opacity: 1; }
     }
 
-    /* Kisses */
-    .kiss{
+    /* Floating emoji (kisses/flowers) */
+    .floaty{
       position:absolute;
-      font-size: 26px;
       pointer-events:none;
-      animation: kisspop .9s ease-out forwards;
       z-index: 7;
+      font-size: 26px;
+      animation: floatUp 1.1s ease-out forwards;
       filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
     }
-    @keyframes kisspop{
-      0%   { transform: translate(-50%,-50%) scale(0.7); opacity:0; }
-      20%  { opacity:1; }
-      100% { transform: translate(-50%,-130%) scale(1.25); opacity:0; }
+    @keyframes floatUp{
+      0%   { transform: translate(-50%,-50%) scale(0.75); opacity:0; }
+      15%  { opacity:1; }
+      100% { transform: translate(-50%,-170%) scale(1.25); opacity:0; }
     }
   </style>
 </head>
@@ -150,20 +151,20 @@
     <h1 id="title">Will you be my Valentine? 💘</h1>
 
     <div class="stage" id="stage">
-      <button class="btn yes" id="yesBtn">Yes</button>
-      <button class="btn no" id="noBtn">No</button>
+      <button class="btn yes" id="yesBtn" type="button">Yes</button>
+      <button class="btn no" id="noBtn" type="button">No</button>
 
       <div class="accepted" id="accepted">
         <div>
-          <div class="big" id="bigLine">Deal 💖</div>
-          <p class="small" id="smallLine">Come here 💋</p>
+          <div class="big">Yay 💖</div>
+          <p class="small">Come here 💋</p>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // ====== SET HER NAME HERE ======
+    // ===== Set her name here =====
     const HER_NAME = "HerName"; // e.g. "Ananya"
 
     const title = document.getElementById('title');
@@ -176,7 +177,6 @@
 
     function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
-    // Place/move No within stage bounds
     function setNoPos(x, y){
       const s = stage.getBoundingClientRect();
       const b = noBtn.getBoundingClientRect();
@@ -188,7 +188,6 @@
       const left = clamp(x, pad, maxX);
       const top  = clamp(y, pad, maxY);
 
-      // because button has translate(-50%,-50%)
       noBtn.style.left = (left + b.width/2) + "px";
       noBtn.style.top  = (top  + b.height/2) + "px";
     }
@@ -208,19 +207,23 @@
         const dy = (y + b.height/2) - ay;
         var dist = Math.hypot(dx, dy);
         tries++;
-      } while(dist < 140 && tries < 30);
+      } while(dist < 150 && tries < 30);
 
       setNoPos(x, y);
     }
 
     function init(){
       const s = stage.getBoundingClientRect();
+      // Keep No on the right-ish area initially
       setNoPos(s.width * 0.62, s.height * 0.58);
+      // Ensure Yes stays centered left-ish even after resize
+      yesBtn.style.left = "35%";
+      yesBtn.style.top  = "62%";
     }
     init();
     window.addEventListener('resize', init);
 
-    // Mouse dodge
+    // Dodge logic
     stage.addEventListener('mousemove', (e) => {
       const s = stage.getBoundingClientRect();
       const mx = e.clientX - s.left;
@@ -233,7 +236,6 @@
       if (Math.hypot(mx - bx, my - by) < 120) moveNoAwayFrom(mx, my);
     });
 
-    // Touch dodge
     noBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
       const s = stage.getBoundingClientRect();
@@ -241,14 +243,13 @@
       moveNoAwayFrom(t.clientX - s.left, t.clientY - s.top);
     }, { passive:false });
 
-    // If somehow clicked
     noBtn.addEventListener('click', (e) => {
       e.preventDefault();
       const s = stage.getBoundingClientRect();
       moveNoAwayFrom(Math.random()*s.width, Math.random()*s.height);
     });
 
-    function confettiBurst(count=80){
+    function confettiBurst(count=70){
       const s = stage.getBoundingClientRect();
       for(let i=0;i<count;i++){
         const c = document.createElement('div');
@@ -261,33 +262,40 @@
       }
     }
 
-    function kissesBurst(n=10){
+    function floatEmojis(emoji, n=10){
       const s = stage.getBoundingClientRect();
       for(let i=0;i<n;i++){
-        const k = document.createElement('div');
-        k.className = 'kiss';
-        k.textContent = "💋";
+        const el = document.createElement('div');
+        el.className = 'floaty';
+        el.textContent = emoji;
+
+        // Spawn around center
         const x = 0.30*s.width + Math.random()*0.40*s.width;
-        const y = 0.35*s.height + Math.random()*0.30*s.height;
-        k.style.left = x + "px";
-        k.style.top  = y + "px";
-        k.style.animationDelay = (Math.random()*220) + "ms";
-        stage.appendChild(k);
-        k.addEventListener('animationend', () => k.remove());
+        const y = 0.40*s.height + Math.random()*0.25*s.height;
+
+        el.style.left = x + "px";
+        el.style.top  = y + "px";
+        el.style.animationDelay = (Math.random()*220) + "ms";
+        el.style.fontSize = (22 + Math.random()*14) + "px";
+
+        stage.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
       }
     }
 
     yesBtn.addEventListener('click', () => {
-      // hide buttons
+      // Hide buttons
       yesBtn.style.display = 'none';
       noBtn.style.display = 'none';
 
-      // show overlay
+      // Show overlay
       accepted.classList.add('show');
 
-      // effects
-      confettiBurst(110);
-      kissesBurst(14);
+      // Effects: flowers + kisses + confetti
+      confettiBurst(100);
+      floatEmojis("💐", 10);
+      floatEmojis("🌸", 10);
+      floatEmojis("💋", 12);
     });
   </script>
 </body>
